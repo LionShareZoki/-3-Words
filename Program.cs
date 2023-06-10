@@ -12,11 +12,22 @@ public class WordCounter
 
         foreach (string line in lines)
         {
-            string[] lineWords = line.Split(' ');
+            string[] lineWords = line.Split(' ')
+            .Select(word => CleanWord(word))
+            .ToArray();
             words.AddRange(lineWords);
         }
 
         return words;
+    }
+
+    private static string CleanWord(string word)
+    {
+        string cleanedWord = new string(word.Where(c => !char.IsPunctuation(c)).ToArray());
+
+        string lowercaseWord = cleanedWord.ToLower();
+
+        return lowercaseWord;
     }
 
     public static List<string> RemoveDuplicateWords(List<string> words)
