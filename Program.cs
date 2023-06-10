@@ -35,6 +35,23 @@ public class WordCounter
         }
         return wordFrequency;
     }
+
+    public static void PrintSummary(List<string> wordsList, Dictionary<string, int> wordFrequency)
+    {
+        int totalWords = wordsList.Count;
+        int uniqueWords = wordFrequency.Count;
+
+        Console.WriteLine($"Total number of words in the document: {totalWords}");
+        Console.WriteLine($"Number of unique words: {uniqueWords}");
+
+        int maxFrequency = wordFrequency.Values.Max();
+        List<string> mostFrequentWords = wordFrequency.Where(pair => pair.Value == maxFrequency)
+                                                     .Select(pair => pair.Key)
+                                                     .ToList();
+        string mostFrequentWordsStr = string.Join(", ", mostFrequentWords);
+        Console.WriteLine($"Most frequent word(s) with frequency {maxFrequency}: {mostFrequentWordsStr}");
+    }
+
     public static void Main()
     {
         List<string> wordsList = ReadWordsFromFile("C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt");
@@ -43,10 +60,11 @@ public class WordCounter
 
         Dictionary<string, int> wordFrequency = CountWordFrequency(wordsList);
 
-        foreach (KeyValuePair<string, int> pair in wordFrequency)
-        {
-            Console.WriteLine($"{pair.Key}: {pair.Value}");
-        }
+        //foreach (KeyValuePair<string, int> pair in wordFrequency)
+        //{
+        //    Console.WriteLine($"{pair.Key}: {pair.Value}");
+        //}
+        PrintSummary(wordsList, wordFrequency);
 
 
     }
