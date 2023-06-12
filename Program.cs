@@ -1,82 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 public class WordCounter
 {
-    public static List<string> ReadWordsFromFile(string filePath)
+    public static void ProcessFile(string filePath)
     {
         List<string> words = new List<string>();
+        HashSet<string> uniqueWords = new HashSet<string>();
+        Dictionary<string, int> wordFrequency = new Dictionary<string, int>();
+        int maxFrequency = 0;
 
-        string[] lines = File.ReadAllLines(filePath);
-
-        foreach (string line in lines)
+        using (StreamReader reader = new StreamReader(filePath))
         {
-            string[] lineWords = line.Split(' ')
-            .Select(word => CleanWord(word))
-            .ToArray();
-            words.AddRange(lineWords);
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] lineWords = line.Split(' ');
+
+                foreach (string word in lineWords)
+                {
+                    string cleanedWord = CleanWord(word);
+
+                    if (!string.IsNullOrWhiteSpace(cleanedWord))
+                    {
+                        words.Add(cleanedWord);
+
+                        if (uniqueWords.Add(cleanedWord))
+                            wordFrequency[cleanedWord] = 1;
+                        else
+                            wordFrequency[cleanedWord]++;
+
+                        if (wordFrequency[cleanedWord] > maxFrequency)
+                            maxFrequency = wordFrequency[cleanedWord];
+                    }
+                }
+            }
         }
 
-        return words;
+        int totalWords = words.Count;
+        int uniqueWordCount = uniqueWords.Count;
+        List<string> mostFrequentWords = GetMostFrequentWords(wordFrequency, maxFrequency);
+
+        PrintSummary(totalWords, uniqueWordCount, maxFrequency, mostFrequentWords);
     }
 
     private static string CleanWord(string word)
     {
         string cleanedWord = new string(word.Where(c => !char.IsPunctuation(c)).ToArray());
-
-        string lowercaseWord = cleanedWord.ToLower();
-
-        return lowercaseWord;
+        return cleanedWord.ToLower();
     }
 
-    public static List<string> RemoveDuplicateWords(List<string> words)
+    private static List<string> GetMostFrequentWords(Dictionary<string, int> wordFrequency, int maxFrequency)
     {
-        HashSet<string> uniqueWords = new HashSet<string>(words);
-        return new List<string>(uniqueWords);
-    }
-
-    public static Dictionary<string, int> CountWordFrequency(List<string> words)
-    {
-        Dictionary<string, int> wordFrequency = new Dictionary<string, int>(); 
-        foreach (string word in words)
+        List<string> mostFrequentWords = new List<string>();
+        foreach (KeyValuePair<string, int> pair in wordFrequency)
         {
-            if (wordFrequency.ContainsKey(word)) wordFrequency[word]++;
-            else wordFrequency[word] = 1;
+            if (pair.Value == maxFrequency)
+                mostFrequentWords.Add(pair.Key);
         }
-        return wordFrequency;
+        return mostFrequentWords;
     }
 
-    public static void PrintSummary(List<string> wordsList, Dictionary<string, int> wordFrequency)
+    public static void PrintSummary(int totalWords, int uniqueWordCount, int maxFrequency, List<string> mostFrequentWords)
     {
-        int totalWords = wordsList.Count;
-        int uniqueWords = wordFrequency.Count;
-
         Console.WriteLine($"Total number of words in the document: {totalWords}");
-        Console.WriteLine($"Number of unique words: {uniqueWords}");
-
-        int maxFrequency = wordFrequency.Values.Max();
-        List<string> mostFrequentWords = wordFrequency.Where(pair => pair.Value == maxFrequency)
-                                                     .Select(pair => pair.Key)
-                                                     .ToList();
-        string mostFrequentWordsStr = string.Join(", ", mostFrequentWords);
-        Console.WriteLine($"Most frequent word(s) with frequency {maxFrequency}: {mostFrequentWordsStr}");
+        Console.WriteLine($"Number of unique words: {uniqueWordCount}");
+        Console.WriteLine($"Most frequent word(s) with frequency {maxFrequency}: {string.Join(", ", mostFrequentWords)}");
     }
 
     public static void Main()
     {
-        List<string> wordsList = ReadWordsFromFile("C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt");
-
-        List<string> uniqueWordsList = RemoveDuplicateWords(wordsList);
-
-        Dictionary<string, int> wordFrequency = CountWordFrequency(wordsList);
-
-        //foreach (KeyValuePair<string, int> pair in wordFrequency)
-        //{
-        //    Console.WriteLine($"{pair.Key}: {pair.Value}");
-        //}
-        PrintSummary(wordsList, wordFrequency);
-
-
+        string filePath = "C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt";
+        ProcessFile(filePath);
     }
 }
