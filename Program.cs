@@ -25,15 +25,27 @@ public class WordCounter
         return new List<string>(uniqueWords);
     }
 
+    public static Dictionary<string, int> CountWordFrequency(List<string> words)
+    {
+        Dictionary<string, int> wordFrequency = new Dictionary<string, int>(); 
+        foreach (string word in words)
+        {
+            if (wordFrequency.ContainsKey(word)) wordFrequency[word]++;
+            else wordFrequency[word] = 1;
+        }
+        return wordFrequency;
+    }
     public static void Main()
     {
         List<string> wordsList = ReadWordsFromFile("C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt");
 
         List<string> uniqueWordsList = RemoveDuplicateWords(wordsList);
 
-        foreach (string word in uniqueWordsList)
+        Dictionary<string, int> wordFrequency = CountWordFrequency(wordsList);
+
+        foreach (KeyValuePair<string, int> pair in wordFrequency)
         {
-            Console.WriteLine(word);
+            Console.WriteLine($"{pair.Key}: {pair.Value}");
         }
 
 
