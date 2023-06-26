@@ -19,13 +19,23 @@ public class WordCounter
         return words;
     }
 
+    public static List<string> RemoveDuplicateWords(List<string> words)
+    {
+        HashSet<string> uniqueWords = new HashSet<string>(words);
+        return new List<string>(uniqueWords);
+    }
+
     public static void Main()
     {
         List<string> wordsList = ReadWordsFromFile("C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt");
 
-        foreach (string word in wordsList)
+        List<string> uniqueWordsList = RemoveDuplicateWords(wordsList);
+
+        foreach (string word in uniqueWordsList)
         {
             Console.WriteLine(word);
         }
+
+
     }
 }
