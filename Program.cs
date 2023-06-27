@@ -38,11 +38,9 @@ public class WordCounter
 
     public static void PrintSummary(List<string> wordsList, Dictionary<string, int> wordFrequency)
     {
-        int totalWords = wordsList.Count;
-        int uniqueWords = wordFrequency.Count;
-
-        Console.WriteLine($"Total number of words in the document: {totalWords}");
-        Console.WriteLine($"Number of unique words: {uniqueWords}");
+      
+        Console.WriteLine($"Total number of words in the document: {wordsList.Count}");
+        Console.WriteLine($"Number of unique words: {wordFrequency.Count}");
 
         int maxFrequency = wordFrequency.Values.Max();
         List<string> mostFrequentWords = wordFrequency.Where(pair => pair.Value == maxFrequency)
