@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 public class WordCounter
 {
@@ -23,7 +24,7 @@ public class WordCounter
 
     private static string CleanWord(string word)
     {
-        string cleanedWord = new string(word.Where(c => !char.IsPunctuation(c)).ToArray());
+        string cleanedWord = Regex.Replace(word, @"[^\w\s]+", "");
 
         string lowercaseWord = cleanedWord.ToLower();
 
@@ -38,7 +39,7 @@ public class WordCounter
 
     public static Dictionary<string, int> CountWordFrequency(List<string> words)
     {
-        Dictionary<string, int> wordFrequency = new Dictionary<string, int>(); 
+        Dictionary<string, int> wordFrequency = new Dictionary<string, int>();
         foreach (string word in words)
         {
             if (wordFrequency.ContainsKey(word)) wordFrequency[word]++;
@@ -49,11 +50,9 @@ public class WordCounter
 
     public static void PrintSummary(List<string> wordsList, Dictionary<string, int> wordFrequency)
     {
-        int totalWords = wordsList.Count;
-        int uniqueWords = wordFrequency.Count;
 
-        Console.WriteLine($"Total number of words in the document: {totalWords}");
-        Console.WriteLine($"Number of unique words: {uniqueWords}");
+        Console.WriteLine($"Total number of words in the document: {wordsList.Count}");
+        Console.WriteLine($"Number of unique words: {wordFrequency.Count}");
 
         int maxFrequency = wordFrequency.Values.Max();
         List<string> mostFrequentWords = wordFrequency.Where(pair => pair.Value == maxFrequency)
@@ -71,10 +70,6 @@ public class WordCounter
 
         Dictionary<string, int> wordFrequency = CountWordFrequency(wordsList);
 
-        //foreach (KeyValuePair<string, int> pair in wordFrequency)
-        //{
-        //    Console.WriteLine($"{pair.Key}: {pair.Value}");
-        //}
         PrintSummary(wordsList, wordFrequency);
 
 
