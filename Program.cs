@@ -25,16 +25,44 @@ public class WordCounter
         return new List<string>(uniqueWords);
     }
 
+    public static Dictionary<string, int> CountWordFrequency(List<string> words)
+    {
+        Dictionary<string, int> wordFrequency = new Dictionary<string, int>(); 
+        foreach (string word in words)
+        {
+            if (wordFrequency.ContainsKey(word)) wordFrequency[word]++;
+            else wordFrequency[word] = 1;
+        }
+        return wordFrequency;
+    }
+
+    public static void PrintSummary(List<string> wordsList, Dictionary<string, int> wordFrequency)
+    {
+      
+        Console.WriteLine($"Total number of words in the document: {wordsList.Count}");
+        Console.WriteLine($"Number of unique words: {wordFrequency.Count}");
+
+        int maxFrequency = wordFrequency.Values.Max();
+        List<string> mostFrequentWords = wordFrequency.Where(pair => pair.Value == maxFrequency)
+                                                     .Select(pair => pair.Key)
+                                                     .ToList();
+        string mostFrequentWordsStr = string.Join(", ", mostFrequentWords);
+        Console.WriteLine($"Most frequent word(s) with frequency {maxFrequency}: {mostFrequentWordsStr}");
+    }
+
     public static void Main()
     {
         List<string> wordsList = ReadWordsFromFile("C:\\Users\\Zoran\\Desktop\\Dario_Internship\\#3_Words\\text.txt");
 
         List<string> uniqueWordsList = RemoveDuplicateWords(wordsList);
 
-        foreach (string word in uniqueWordsList)
-        {
-            Console.WriteLine(word);
-        }
+        Dictionary<string, int> wordFrequency = CountWordFrequency(wordsList);
+
+        //foreach (KeyValuePair<string, int> pair in wordFrequency)
+        //{
+        //    Console.WriteLine($"{pair.Key}: {pair.Value}");
+        //}
+        PrintSummary(wordsList, wordFrequency);
 
 
     }
